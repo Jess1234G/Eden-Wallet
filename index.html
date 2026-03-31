@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eden Wallet | La billetera financiera de LATAM</title>
+    <title>Eden Wallet | Billetera digital para LATAM - Ahorro en USDC, pagos instantáneos</title>
+    <meta name="description" content="Eden Wallet: la billetera digital que conecta Latinoamérica. Ahorra en dólares digitales (USDC), envía dinero al instante y vende a toda la región sin fronteras. Operamos en México, Brasil, Colombia, Argentina, Chile y Perú.">
+    <meta name="keywords" content="billetera digital, latam, fintech, usdc, stablecoin, pagos instantáneos, ahorro en dólares, transferencias p2p, bitcoin, criptomonedas, bitso">
+    <meta name="author" content="Eden Wallet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS para mapa interactivo -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <style>
         * {
             margin: 0;
@@ -313,32 +318,166 @@
                         0 0 20px rgba(16,185,129,0.1),
                         inset 0 1px 0 rgba(255,255,255,0.1);
         }
-        /* Country list */
-        .country-list {
+        /* Mapa interactivo */
+        .map-section {
+            padding: 3rem 0;
+        }
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+            margin-bottom: 1.5rem;
+        }
+        #latam-map {
+            width: 100%;
+            height: 100%;
+            background: #0A0A0A;
+        }
+        .map-legend {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 1.5rem;
-            font-size: 1.2rem;
-            font-weight: 500;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+        }
+        .legend-color.operational {
+            background-color: var(--color-primary);
+        }
+        .legend-color.planned {
+            background-color: #3B82F6;
+            border: 2px dashed #3B82F6;
+        }
+        .legend-color.potential {
+            background-color: #8B5CF6;
+            opacity: 0.7;
+        }
+        /* Lista de países */
+        .countries-list {
             margin-top: 2rem;
+            text-align: center;
         }
-        .country-list span {
-            background: #1A1A1A;
-            padding: 0.5rem 1rem;
+        .countries-list h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--color-text-light);
+        }
+        .country-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .country-tag {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 40px;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.95rem;
             transition: all 0.3s var(--easing);
-            opacity: 0;
-            transform: scale(0.9);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .country-list span.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .country-list span:hover {
+        .country-tag:hover {
             background: var(--color-primary);
             color: #000;
-            transform: scale(1.05);
+            border-color: var(--color-primary);
+            transform: translateY(-3px);
+        }
+        @media (max-width: 768px) {
+            .country-tags {
+                gap: 0.75rem;
+            }
+            .country-tag {
+                padding: 0.4rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        /* Sección Quiénes somos */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .about-column {
+            background: var(--color-card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .about-column h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-primary);
+        }
+        .about-column ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .about-column li {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .about-column li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--color-primary);
+        }
+        /* Sección Estadísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        .stat-box {
+            background: var(--color-card);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s var(--easing);
+        }
+        .stat-box:hover {
+            transform: translateY(-5px);
+            border-color: var(--color-primary);
+        }
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--color-text-light);
         }
         /* Contact form */
         .contact-form {
@@ -416,11 +555,62 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 20px -5px rgba(16,185,129,0.3);
         }
-        /* Footer */
+        /* Footer mejorado */
         footer {
-            text-align: center;
-            padding: 2rem 0;
+            padding: 4rem 0 2rem;
             border-top: 1px solid #1A1A1A;
+        }
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .footer-links a {
+            color: var(--color-text-light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-links a:hover {
+            color: var(--color-primary);
+        }
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .social-icon:hover {
+            background: var(--color-primary);
+            color: #000;
+            transform: translateY(-3px);
+        }
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
             color: #666;
             font-size: 0.875rem;
         }
@@ -438,9 +628,24 @@
             transition: opacity 0.3s;
         }
         /* Responsive */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+            .about-grid {
+                gap: 2rem;
+            }
+            .about-column {
+                padding: 2rem;
+            }
+        }
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 3rem;
+            }
+            .tagline {
+                font-size: 1.1rem;
+                padding: 0 1rem;
             }
             .nav-links {
                 position: fixed;
@@ -473,13 +678,96 @@
             .hero-buttons {
                 flex-direction: column;
                 align-items: center;
+                gap: 1rem;
             }
             .btn {
-                width: 80%;
+                width: 100%;
+                max-width: 300px;
                 text-align: center;
             }
             .cards {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .section {
+                padding: 3rem 0;
+            }
+            .section h2 {
+                font-size: 2rem;
+                padding: 0 1rem;
+            }
+            .section-subtitle {
+                font-size: 1rem;
+                padding: 0 1rem;
+                margin-bottom: 2rem;
+            }
+            .map-container {
+                height: 350px;
+            }
+            .map-legend {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin-top: 2rem;
+            }
+            .about-column {
+                padding: 1.5rem;
+            }
+            .about-column h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+            .stat-box {
+                padding: 1.5rem 1rem;
+            }
+            .stat-number {
+                font-size: 2.5rem;
+            }
+            .stat-label {
+                font-size: 1rem;
+            }
+            .contact-form {
+                padding: 0 1rem;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .social-links {
+                justify-content: center;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero-buttons .btn {
+                width: 100%;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .map-container {
+                height: 300px;
+            }
+            .container {
+                padding: 0 1rem;
+            }
+            .section h2 {
+                font-size: 1.75rem;
             }
         }
         /* Utilidades de animación */
@@ -505,6 +793,8 @@
                 <li><a href="#producto">Producto</a></li>
                 <li><a href="#paises">Países</a></li>
                 <li><a href="#modelo">Modelo</a></li>
+                <li><a href="#quienes-somos">Quiénes somos</a></li>
+                <li><a href="#estadisticas">Estadísticas</a></li>
                 <li><a href="#contacto">Contacto</a></li>
             </ul>
             <div class="menu-toggle" id="menuToggle">
@@ -519,7 +809,7 @@
             <h1>Eden Wallet</h1>
             <p class="tagline">La billetera que conecta a Latinoamérica.<br>Ahorra en dólares digitales. Envía dinero al instante. Vende a toda la región.</p>
             <div class="hero-buttons">
-                <a href="#" class="btn btn-primary">Próximamente</a>
+                <a href="#producto" class="btn btn-primary">Ver producto</a>
                 <a href="#contacto" class="btn btn-secondary">Inversores</a>
             </div>
         </div>
@@ -552,10 +842,36 @@
     <section id="paises" class="section bg-dark">
         <div class="container">
             <h2>Presencia en LATAM</h2>
-            <p class="section-subtitle">Operamos en los países con mayor adopción de pagos digitales.</p>
-            <div class="country-list">
-                <span>🇲🇽 México</span> <span>🇧🇷 Brasil</span> <span>🇨🇴 Colombia</span>
-                <span>🇦🇷 Argentina</span> <span>🇨🇱 Chile</span> <span>🇵🇪 Perú</span>
+            <p class="section-subtitle">Operamos en los países con mayor adopción de pagos digitales y planeamos expandirnos a más regiones.</p>
+            
+            <div class="map-container">
+                <div id="latam-map"></div>
+            </div>
+            
+            <div class="map-legend">
+                <div class="legend-item">
+                    <div class="legend-color operational"></div>
+                    <div>Países operativos (6)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color planned"></div>
+                    <div>Próxima expansión (3)</div>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color potential"></div>
+                    <div>En evaluación (2)</div>
+                </div>
+            </div>
+            <div class="countries-list">
+                <h4>Países donde operamos actualmente:</h4>
+                <div class="country-tags">
+                    <span class="country-tag">🇲🇽 México</span>
+                    <span class="country-tag">🇧🇷 Brasil</span>
+                    <span class="country-tag">🇨🇴 Colombia</span>
+                    <span class="country-tag">🇦🇷 Argentina</span>
+                    <span class="country-tag">🇨🇱 Chile</span>
+                    <span class="country-tag">🇵🇪 Perú</span>
+                </div>
             </div>
         </div>
     </section>
@@ -580,6 +896,61 @@
         </div>
     </section>
 
+    <section id="quienes-somos" class="section bg-dark">
+        <div class="container">
+            <h2>Quiénes somos</h2>
+            <p class="section-subtitle">Conoce la misión, visión y tecnología detrás de Eden Wallet.</p>
+            
+            <div class="about-grid">
+                <div class="about-column">
+                    <h3>Misión y Visión</h3>
+                    <p><strong>Misión:</strong> Facilitar el flujo de transacciones a nivel latinoamericano para romper con las barreras comerciales y financieras de la región, unificando el mercado mediante una stablecoin como base para la cooperación entre comercios y la estabilidad en activos financieros.</p>
+                    <p><strong>Visión:</strong> Proteger las monedas locales de la inflación y devaluación, ofreciendo tasas de rendimiento en una moneda externa (stablecoin) que no pertenece a ningún país, aportando así mayor poder económico a las naciones mediante rendimientos que pueden convertirse de vuelta a la moneda local, generando ingresos pasivos y fortaleciendo la economía regional.</p>
+                </div>
+                
+                <div class="about-column">
+                    <h3>Fundador y Tecnología</h3>
+                    <p><strong>Fundador y Creador:</strong> Jesús David Guerrero (Jesús D. Guerrero)</p>
+                    <p><strong>Tecnología que impulsa Eden Wallet:</strong></p>
+                    <ul>
+                        <li><strong>Backend:</strong> Node.js + TypeScript, API RESTful.</li>
+                        <li><strong>Base de datos:</strong> PostgreSQL sobre Linux (alto rendimiento y seguridad).</li>
+                        <li><strong>Infraestructura de pagos:</strong> Bitso Business (licencias y cumplimiento en LATAM).</li>
+                        <li><strong>Seguridad:</strong> JWT, hashing bcrypt, idempotencia, listas blancas de IP, y monitoreo AML.</li>
+                        <li><strong>Próximamente:</strong> App móvil en React Native (iOS y Android).</li>
+                    </ul>
+                    <p><strong>Operaciones y seguridad:</strong> Las transacciones son atómicas (ledger inmutable), los fondos de usuarios están respaldados en cuentas de Bitso, y seguimos estrictos estándares KYC/AML con límites mensuales escalables.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="estadisticas" class="section">
+        <div class="container">
+            <h2>Nuestro impacto</h2>
+            <p class="section-subtitle">Datos que reflejan nuestro compromiso con Latinoamérica.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Países en operación</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">0%</div>
+                    <div class="stat-label">Comisiones P2P</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">Próximamente</div>
+                    <div class="stat-label">Comerciantes registrados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">USDC</div>
+                    <div class="stat-label">Ahorro sin comisiones ocultas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="contacto" class="section bg-dark">
         <div class="container">
             <h2>¿Inversor o socio?</h2>
@@ -595,9 +966,55 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 Eden Wallet. Construyendo el futuro financiero de Latinoamérica.</p>
+            <div class="footer-content">
+                <div>
+                    <div class="footer-logo">
+                        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        <span>Eden Wallet</span>
+                    </div>
+                    <p>Construyendo el futuro financiero de Latinoamérica.</p>
+                    <div class="social-links">
+                        <a href="https://github.com" class="social-icon" target="_blank" aria-label="GitHub">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                        </a>
+                        <a href="https://linkedin.com" class="social-icon" target="_blank" aria-label="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+                        </a>
+                        <a href="https://twitter.com" class="social-icon" target="_blank" aria-label="Twitter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Enlaces rápidos</h3>
+                    <a href="#producto">Producto</a>
+                    <a href="#paises">Países</a>
+                    <a href="#modelo">Modelo de negocio</a>
+                    <a href="#quienes-somos">Quiénes somos</a>
+                    <a href="#contacto">Contacto</a>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Legal</h3>
+                    <a href="#">Términos de servicio</a>
+                    <a href="#">Política de privacidad</a>
+                    <a href="#">Política de cookies</a>
+                    <a href="#">Aviso legal</a>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 Eden Wallet. Todos los derechos reservados. Construyendo el futuro financiero de Latinoamérica.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #888;">Eden Wallet es un proyecto en desarrollo. Algunas funcionalidades pueden estar en fase de prueba.</p>
+            </div>
         </div>
     </footer>
+
+    <!-- Leaflet JS para mapa interactivo -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <script>
         // Menú móvil
@@ -653,12 +1070,33 @@
                             setTimeout(() => span.classList.add('visible'), index * 100);
                         });
                     }
+                    // Si es stat-box, animar número (simulación)
+                    if (entry.target.classList.contains('stat-box')) {
+                        const numberEl = entry.target.querySelector('.stat-number');
+                        if (numberEl && !numberEl.dataset.animated) {
+                            numberEl.dataset.animated = 'true';
+                            const finalNum = numberEl.textContent;
+                            if (!isNaN(parseInt(finalNum))) {
+                                let current = 0;
+                                const increment = parseInt(finalNum) / 50;
+                                const timer = setInterval(() => {
+                                    current += increment;
+                                    if (current >= parseInt(finalNum)) {
+                                        numberEl.textContent = finalNum;
+                                        clearInterval(timer);
+                                    } else {
+                                        numberEl.textContent = Math.floor(current);
+                                    }
+                                }, 30);
+                            }
+                        }
+                    }
                 }
             });
         }, observerOptions);
 
         // Observar elementos
-        document.querySelectorAll('h2, .section-subtitle, .card, .country-list, .contact-form').forEach(el => {
+        document.querySelectorAll('h2, .section-subtitle, .card, .country-list, .contact-form, .about-column, .stat-box, .map-container').forEach(el => {
             observer.observe(el);
         });
 
@@ -716,6 +1154,96 @@
 
         // Inicializar navbar scrolled si ya se hizo scroll al cargar
         if (window.scrollY > 50) navbar.classList.add('scrolled');
+
+        // Mapa interactivo de LATAM con Leaflet
+        function initMap() {
+            const map = L.map('latam-map').setView([-15, -60], 3);
+            
+            // Usar OpenStreetMap tiles (grises para mejor contraste)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                maxZoom: 6,
+                minZoom: 2
+            }).addTo(map);
+
+            // Países operativos (marcadores verdes)
+            const operationalCountries = [
+                { name: 'México', coords: [23.6345, -102.5528], status: 'Operativo' },
+                { name: 'Brasil', coords: [-14.2350, -51.9253], status: 'Operativo' },
+                { name: 'Colombia', coords: [4.5709, -74.2973], status: 'Operativo' },
+                { name: 'Argentina', coords: [-38.4161, -63.6167], status: 'Operativo' },
+                { name: 'Chile', coords: [-35.6751, -71.5430], status: 'Operativo' },
+                { name: 'Perú', coords: [-9.1900, -75.0152], status: 'Operativo' }
+            ];
+
+            // Próxima expansión (marcadores azules)
+            const plannedCountries = [
+                { name: 'Uruguay', coords: [-32.5228, -55.7658], status: 'Próximamente' },
+                { name: 'Paraguay', coords: [-23.4425, -58.4438], status: 'Próximamente' },
+                { name: 'Panamá', coords: [8.5375, -80.7821], status: 'Próximamente' }
+            ];
+
+            // En evaluación (marcadores púrpura)
+            const potentialCountries = [
+                { name: 'Ecuador', coords: [-1.8312, -78.1834], status: 'En evaluación' },
+                { name: 'Bolivia', coords: [-16.2902, -63.5887], status: 'En evaluación' }
+            ];
+
+            // Iconos personalizados
+            const greenIcon = L.divIcon({
+                className: 'custom-icon',
+                html: '<div style="background-color: #10B981; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(16,185,129,0.7);"></div>',
+                iconSize: [26, 26],
+                iconAnchor: [13, 13]
+            });
+
+            const blueIcon = L.divIcon({
+                className: 'custom-icon',
+                html: '<div style="background-color: #3B82F6; width: 20px; height: 20px; border-radius: 50%; border: 3px dashed white; box-shadow: 0 0 10px rgba(59,130,246,0.7);"></div>',
+                iconSize: [26, 26],
+                iconAnchor: [13, 13]
+            });
+
+            const purpleIcon = L.divIcon({
+                className: 'custom-icon',
+                html: '<div style="background-color: #8B5CF6; width: 18px; height: 18px; border-radius: 50%; border: 2px solid white; opacity: 0.8; box-shadow: 0 0 10px rgba(139,92,246,0.7);"></div>',
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+
+            // Agregar marcadores operativos
+            operationalCountries.forEach(country => {
+                L.marker(country.coords, { icon: greenIcon })
+                    .addTo(map)
+                    .bindPopup(`<strong>${country.name}</strong><br>Estado: <span style="color: #10B981; font-weight: bold;">${country.status}</span><br>Disponible ahora`);
+            });
+
+            // Agregar marcadores planificados
+            plannedCountries.forEach(country => {
+                L.marker(country.coords, { icon: blueIcon })
+                    .addTo(map)
+                    .bindPopup(`<strong>${country.name}</strong><br>Estado: <span style="color: #3B82F6; font-weight: bold;">${country.status}</span><br>Expansión planificada 2025`);
+            });
+
+            // Agregar marcadores potenciales
+            potentialCountries.forEach(country => {
+                L.marker(country.coords, { icon: purpleIcon })
+                    .addTo(map)
+                    .bindPopup(`<strong>${country.name}</strong><br>Estado: <span style="color: #8B5CF6; font-weight: bold;">${country.status}</span><br>En estudio de mercado`);
+            });
+
+            // Ajustar vista para móviles
+            if (window.innerWidth < 768) {
+                map.setView([-20, -60], 2);
+            }
+        }
+
+        // Inicializar mapa cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMap);
+        } else {
+            initMap();
+        }
     </script>
 </body>
 </html>
