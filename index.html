@@ -793,6 +793,214 @@
             opacity: 1 !important;
             transform: translateY(0) !important;
         }
+
+        /* Estilos para la sección Roadmap */
+        .roadmap {
+            position: relative;
+            padding: 4rem 0;
+        }
+        .roadmap-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .roadmap-timeline {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4rem;
+            padding-bottom: 2rem;
+        }
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 50px;
+            right: 50px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary) 0%, #3B82F6 50%, #6B7280 100%);
+            border-radius: 2px;
+            z-index: 1;
+        }
+        .roadmap-milestone {
+            position: relative;
+            flex: 1;
+            text-align: center;
+            z-index: 2;
+            padding: 0 1rem;
+        }
+        .milestone-marker {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--color-card);
+            border: 4px solid transparent;
+            transition: all 0.4s var(--easing);
+            cursor: pointer;
+        }
+        .milestone-marker.completed {
+            border-color: var(--color-primary);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-primary);
+        }
+        .milestone-marker.in-progress {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+            animation: pulse-blue 2s infinite;
+        }
+        .milestone-marker.planned {
+            border-color: #6B7280;
+            background: rgba(107, 114, 128, 0.1);
+            color: #6B7280;
+        }
+        .milestone-marker.future {
+            border-color: #4B5563;
+            background: rgba(75, 85, 99, 0.1);
+            color: #6B7280;
+        }
+        @keyframes pulse-blue {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        }
+        .milestone-content {
+            background: var(--color-card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s var(--easing);
+            margin-top: 1rem;
+        }
+        .milestone-content h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-primary);
+        }
+        .milestone-content .status {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        .status.completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--color-primary);
+        }
+        .status.in-progress {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3B82F6;
+        }
+        .status.planned {
+            background: rgba(107, 114, 128, 0.2);
+            color: #9CA3AF;
+        }
+        .status.future {
+            background: rgba(75, 85, 99, 0.2);
+            color: #9CA3AF;
+        }
+        .milestone-content p {
+            color: var(--color-text-light);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .milestone-marker:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+        .milestone-marker.in-progress:hover {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        .roadmap-timeline-mobile {
+            display: none;
+            position: relative;
+            padding-left: 2rem;
+            margin-top: 3rem;
+        }
+        .roadmap-timeline-mobile::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--color-primary) 0%, #3B82F6 50%, #6B7280 100%);
+            border-radius: 2px;
+        }
+        .milestone-mobile {
+            position: relative;
+            margin-bottom: 2.5rem;
+            padding-left: 2rem;
+        }
+        .milestone-mobile::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--color-card);
+            border: 3px solid transparent;
+            z-index: 2;
+        }
+        .milestone-mobile.completed::before {
+            border-color: var(--color-primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .milestone-mobile.in-progress::before {
+            border-color: #3B82F6;
+            background: rgba(59, 130, 246, 0.1);
+            animation: pulse-blue 2s infinite;
+        }
+        .milestone-mobile.planned::before,
+        .milestone-mobile.future::before {
+            border-color: #6B7280;
+            background: rgba(107, 114, 128, 0.1);
+        }
+        @media (max-width: 1024px) {
+            .roadmap-timeline {
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+            .roadmap-milestone {
+                flex: 0 0 calc(33.333% - 2rem);
+            }
+        }
+        @media (max-width: 768px) {
+            .roadmap-timeline {
+                display: none;
+            }
+            .roadmap-timeline-mobile {
+                display: block;
+            }
+            .roadmap-milestone {
+                flex: 0 0 calc(50% - 1rem);
+            }
+        }
+        @media (max-width: 480px) {
+            .roadmap-milestone {
+                flex: 0 0 100%;
+            }
+        }
+
+        /* Estilos para contadores animados */
+        .counter {
+            display: inline-block;
+            font-weight: 800;
+        }
+        .counter-animated {
+            transition: all 0.3s ease-out;
+        }
+        .stat-box .stat-number {
+            transition: all 0.3s var(--easing);
+        }
     </style>
 </head>
 <body>
@@ -950,12 +1158,20 @@
             
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div class="stat-number">6</div>
+                    <div class="stat-number counter" data-target="6">0</div>
                     <div class="stat-label">Países en operación</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-number">0%</div>
                     <div class="stat-label">Comisiones P2P</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number counter" data-target="500">0</div>
+                    <div class="stat-label">Usuarios registrados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number counter" data-target="1200">0</div>
+                    <div class="stat-label">Transacciones procesadas</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-number long-text">Próximamente</div>
@@ -964,6 +1180,95 @@
                 <div class="stat-box">
                     <div class="stat-number">USDC</div>
                     <div class="stat-label">Ahorro sin comisiones ocultas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="roadmap" class="section bg-dark">
+        <div class="container">
+            <h2>Hoja de ruta</h2>
+            <p class="section-subtitle">Nuestro camino para transformar las finanzas en Latinoamérica</p>
+            
+            <div class="roadmap-timeline">
+                <div class="roadmap-milestone">
+                    <div class="milestone-marker completed">✅</div>
+                    <div class="milestone-content">
+                        <h4>Fase 1 – MVP (Completada)</h4>
+                        <span class="status completed">Completada</span>
+                        <p>Autenticación, transferencias P2P, límites mensuales, gestión de usuarios y wallets.</p>
+                    </div>
+                </div>
+                <div class="roadmap-milestone">
+                    <div class="milestone-marker completed">✅</div>
+                    <div class="milestone-content">
+                        <h4>Fase 2 – Comerciantes (Completada)</h4>
+                        <span class="status completed">Completada</span>
+                        <p>Productos digitales/físicos, generación de QR, órdenes, checkout simulado y gestión de inventario.</p>
+                    </div>
+                </div>
+                <div class="roadmap-milestone">
+                    <div class="milestone-marker in-progress">⏳</div>
+                    <div class="milestone-content">
+                        <h4>Fase 3 – Pagos reales (En curso)</h4>
+                        <span class="status in-progress">En curso</span>
+                        <p>Integración con Bitso, depósitos/retiros en moneda local (PIX, SPEI, etc.), KYC avanzado y webhooks.</p>
+                    </div>
+                </div>
+                <div class="roadmap-milestone">
+                    <div class="milestone-marker planned">🚀</div>
+                    <div class="milestone-content">
+                        <h4>Fase 4 – App Móvil (Próxima)</h4>
+                        <span class="status planned">Próxima</span>
+                        <p>Lanzamiento en iOS/Android, KYC/AML avanzado, rendimientos 3.5% A.E., notificaciones push.</p>
+                    </div>
+                </div>
+                <div class="roadmap-milestone">
+                    <div class="milestone-marker future">🔮</div>
+                    <div class="milestone-content">
+                        <h4>Fase 5 – Expansión (Futuro)</h4>
+                        <span class="status future">Futuro</span>
+                        <p>Norteamérica/Europa, soporte multi-cripto, APIs para desarrolladores y alianzas estratégicas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Versión móvil -->
+            <div class="roadmap-timeline-mobile">
+                <div class="milestone-mobile completed">
+                    <div class="milestone-content">
+                        <h4>Fase 1 – MVP (Completada)</h4>
+                        <span class="status completed">Completada</span>
+                        <p>Autenticación, transferencias P2P, límites mensuales.</p>
+                    </div>
+                </div>
+                <div class="milestone-mobile completed">
+                    <div class="milestone-content">
+                        <h4>Fase 2 – Comerciantes (Completada)</h4>
+                        <span class="status completed">Completada</span>
+                        <p>Productos digitales/físicos, generación de QR, órdenes.</p>
+                    </div>
+                </div>
+                <div class="milestone-mobile in-progress">
+                    <div class="milestone-content">
+                        <h4>Fase 3 – Pagos reales (En curso)</h4>
+                        <span class="status in-progress">En curso</span>
+                        <p>Integración con Bitso, depósitos/retiros en moneda local.</p>
+                    </div>
+                </div>
+                <div class="milestone-mobile planned">
+                    <div class="milestone-content">
+                        <h4>Fase 4 – App Móvil (Próxima)</h4>
+                        <span class="status planned">Próxima</span>
+                        <p>Lanzamiento en iOS/Android, KYC/AML avanzado, rendimientos 3.5% A.E.</p>
+                    </div>
+                </div>
+                <div class="milestone-mobile future">
+                    <div class="milestone-content">
+                        <h4>Fase 5 – Expansión (Futuro)</h4>
+                        <span class="status future">Futuro</span>
+                        <p>Norteamérica/Europa, soporte multi-cripto.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1088,24 +1393,48 @@
                             setTimeout(() => span.classList.add('visible'), index * 100);
                         });
                     }
-                    // Si es stat-box, animar número (simulación)
+                    // Si es stat-box, animar números (contadores)
                     if (entry.target.classList.contains('stat-box')) {
                         const numberEl = entry.target.querySelector('.stat-number');
                         if (numberEl && !numberEl.dataset.animated) {
                             numberEl.dataset.animated = 'true';
-                            const finalNum = numberEl.textContent;
-                            if (!isNaN(parseInt(finalNum))) {
+                            
+                            // Priorizar data-target si existe
+                            const targetValue = numberEl.dataset.target;
+                            if (targetValue && !isNaN(parseInt(targetValue))) {
+                                // Animación de 2 segundos para contadores con data-target
+                                const finalNum = parseInt(targetValue);
                                 let current = 0;
-                                const increment = parseInt(finalNum) / 50;
+                                const duration = 2000; // 2 segundos
+                                const steps = 60; // 60 frames en 2 segundos (≈33ms por paso)
+                                const increment = finalNum / steps;
+                                const stepTime = duration / steps;
+                                
                                 const timer = setInterval(() => {
                                     current += increment;
-                                    if (current >= parseInt(finalNum)) {
+                                    if (current >= finalNum) {
                                         numberEl.textContent = finalNum;
                                         clearInterval(timer);
                                     } else {
                                         numberEl.textContent = Math.floor(current);
                                     }
-                                }, 30);
+                                }, stepTime);
+                            } else {
+                                // Lógica original para números sin data-target
+                                const finalNum = numberEl.textContent;
+                                if (!isNaN(parseInt(finalNum))) {
+                                    let current = 0;
+                                    const increment = parseInt(finalNum) / 50;
+                                    const timer = setInterval(() => {
+                                        current += increment;
+                                        if (current >= parseInt(finalNum)) {
+                                            numberEl.textContent = finalNum;
+                                            clearInterval(timer);
+                                        } else {
+                                            numberEl.textContent = Math.floor(current);
+                                        }
+                                    }, 30);
+                                }
                             }
                         }
                     }
